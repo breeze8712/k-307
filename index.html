@@ -349,7 +349,7 @@ $("#peoplegrid").addEventListener("click",function(e){
   const key=trigger.dataset.staff,p=PEOPLE.find(item=>item[2]===key),info=staffProfiles[key];
   const fields=[T[p[0]].n,info[2],info[0],info[1],info[3]];
   const base="https://itimg.kr/7157/dm/"+key;
-  const slides=[{url:base+".webp",label:"사원증"},...staffImages.map(code=>({url:base+"/"+code+".webp",label:"일러스트 "+code}))];
+  const slides=[{url:base+".webp",label:"사원증"},...staffImages.map(code=>({url:base+"/"+code+".webp",label:"일러스트"}))];
   $("#staff-info").innerHTML='<h3 id="staff-name">'+esc(p[1])+'</h3>'+
     '<div class="staff-gallery" role="group" aria-label="직원 이미지">'+
     '<button class="gallery-prev" type="button" aria-label="이전 이미지">&lt;</button>'+
@@ -370,7 +370,7 @@ $("#peoplegrid").addEventListener("click",function(e){
     });
     frame.replaceChildren(img);
     img.src=slide.url;
-    count.textContent=(current+1)+" / "+slides.length+" · "+slide.label;
+    count.textContent=(current+1)+" / "+slides.length;
   }
   function move(direction){
     current=(current+direction+slides.length)%slides.length;
