@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>K-307 도킹 스테이션</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f5f9;--sf:#fff;--tx:#17202e;--mu:#5a6578;--ln:#d5dbe6;--pr:#0a3d8f;--prt:#fff;--ac:#f2b700;--soft:#e6edf9;--bd:#0b1e3d;--bdt:#e8eefb;--bda:#ffd23f}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--tx);font:400 16px/1.7 "IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+a{color:inherit}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+.util{background:var(--bd);color:var(--bdt);font-size:13px}
+.util .wrap{display:flex;justify-content:space-between;gap:12px;padding-top:6px;padding-bottom:6px}
+header.top{background:var(--sf);border-bottom:3px solid var(--pr);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:700;font-size:19px;line-height:1.2}
+.logo small{display:block;font-weight:400;font-size:12px;color:var(--mu)}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav a{text-decoration:none;padding:8px 14px;border-radius:6px;font-weight:500}
+nav a:hover{background:var(--soft)}
+nav a.on{background:var(--pr);color:var(--prt)}
+nav a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.hero{background:var(--bd);color:var(--bdt);padding:44px 0 36px}
+.hero h1{font-size:clamp(28px,5vw,46px);line-height:1.25;margin:0 0 12px;font-weight:700;color:#fff;word-break:keep-all}
+.hero p{max-width:620px;margin:0 0 26px;word-break:keep-all}
+.board{border:1px solid #2c4470;border-radius:8px;overflow:hidden;background:#06142b;font-variant-numeric:tabular-nums}
+.board .r{display:grid;grid-template-columns:1.1fr 1.2fr 1.6fr 1fr;gap:10px;padding:10px 16px;border-top:1px solid #1d3156;font-size:15px}
+.board .h{background:#10264b;border-top:0;font-size:13px;color:#9fb4d8}
+.board .s{color:var(--bda);font-weight:700}
+.board .ok{color:#7ee2a8}
+.board .r .c{overflow-wrap:anywhere}
+.board-wrap{overflow-x:auto}
+.board-wrap .board{min-width:560px}
+section.v{display:none;padding:36px 0 56px}
+section.v.on{display:block}
+h2{font-size:26px;margin:0 0 6px;padding-left:12px;border-left:6px solid var(--pr);line-height:1.3}
+.lead{color:var(--mu);margin:0 0 24px;word-break:keep-all}
+.panel{background:var(--sf);border:1px solid var(--ln);border-radius:8px;padding:22px}
+.panel p{margin:0 0 12px;word-break:keep-all}
+.panel p:last-child{margin:0}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:18px 0}
+.stat{background:var(--soft);border-radius:8px;padding:14px 16px}
+.stat b{display:block;font-size:15px}
+.stat span{font-size:14px;color:var(--mu)}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.team{background:var(--sf);border:1px solid var(--ln);border-top:5px solid var(--tc,var(--pr));border-radius:8px;padding:18px}
+.team h3{margin:0 0 4px;font-size:19px}
+.team .d{color:var(--mu);font-size:14.5px;margin:0 0 12px}
+.team ul{margin:0 0 12px;padding-left:18px;font-size:14.5px}
+.team .m{display:flex;gap:6px;flex-wrap:wrap}
+.chip{display:inline-block;font-size:13px;padding:2px 10px;border-radius:99px;background:var(--soft);border:1px solid var(--ln)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.filters button{border:1px solid var(--ln);background:var(--sf);color:var(--tx);font:inherit;font-size:14px;padding:6px 14px;border-radius:99px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--pr);color:var(--prt);border-color:var(--pr)}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+.card .ph{height:92px;background:repeating-linear-gradient(135deg,var(--soft) 0 10px,transparent 10px 20px);border-bottom:4px solid var(--tc,var(--pr));display:flex;align-items:flex-end;padding:8px 14px;font-size:12px;color:var(--mu)}
+.card .bd{padding:14px 16px}
+.card h3{margin:0;font-size:18px}
+.card .t{font-size:13.5px;color:var(--mu)}
+.card p{margin:8px 0 0;font-size:14px;color:var(--mu)}
+form.p{display:grid;gap:14px;grid-template-columns:repeat(2,1fr)}
+form.p label{display:grid;gap:4px;font-size:14px;font-weight:500}
+form.p .f{grid-column:1/-1}
+input,select,textarea{font:inherit;font-size:15px;padding:9px 11px;border:1px solid var(--ln);border-radius:6px;background:var(--bg);color:var(--tx);width:100%}
+textarea{min-height:84px;resize:vertical}
+.btn{font:inherit;font-weight:500;padding:10px 18px;border-radius:6px;border:1px solid var(--pr);background:var(--pr);color:var(--prt);cursor:pointer}
+.btn.g{background:transparent;color:var(--pr)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.lay{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:20px;align-items:start}
+.id{background:var(--sf);border:2px solid var(--pr);border-radius:12px;overflow:hidden;position:sticky;top:90px}
+.id .hd{background:var(--tc,var(--pr));color:#fff;padding:10px 16px;font-size:13px;display:flex;justify-content:space-between;gap:8px}
+.id .bd{padding:16px}
+.id .nm{font-size:24px;font-weight:700;line-height:1.3;margin:0}
+.id dl{margin:12px 0 0;display:grid;grid-template-columns:76px 1fr;gap:6px 10px;font-size:14.5px}
+.id dt{color:var(--mu)}
+.id dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}
+.saved{margin-top:28px}
+.saved .card .bd{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.empty{color:var(--mu);font-size:14.5px;padding:14px 0}
+footer{background:var(--bd);color:var(--bdt);font-size:13.5px;padding:24px 0}
+footer p{margin:2px 0}
+@media (max-width:720px){.lay{grid-template-columns:1fr}.id{position:static}form.p{grid-template-columns:1fr}.board .r{grid-template-columns:1fr 1fr}.board .h{display:none}.board-wrap .board{min-width:0}}
+@media (prefers-reduced-motion:no-preference){.board .s{animation:bl 1.6s steps(2,jump-none) infinite}@keyframes bl{50%{opacity:.45}}}
+.bgm{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:9;display:flex;align-items:center;gap:10px;background:var(--sf);border:1px solid var(--ln);border-radius:99px;padding:6px 14px 6px 6px;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.bgm button{width:36px;height:36px;border-radius:50%;border:0;background:var(--pr);color:var(--prt);font-size:16px;cursor:pointer;line-height:1}
+.bgm input{width:90px;padding:0;border:0;background:none;accent-color:var(--pr)}
+.bgm label{font-size:12.5px;color:var(--mu);white-space:nowrap}
+@media (max-width:420px){.bgm label{display:none}.bgm input{width:72px}}
+:root{color-scheme:light;--bg:#fff;--sf:#fff;--tx:#182c39;--mu:#526571;--ln:#dce6eb;--pr:#225d75;--prt:#fff;--ac:#bd3776;--soft:#edf5f7;--bd:#f1f7f8;--bdt:#274754;--bda:#744c13}
+body{padding-bottom:calc(78px + env(safe-area-inset-bottom,0px))}
+header.top{border-bottom:1px solid var(--ln)}
+.logo img{display:block;object-fit:contain;flex:none}
+.hero h1{color:var(--tx)}
+.hero{background:linear-gradient(135deg,#fff,#f2f8fa);border-bottom:1px solid var(--ln)}
+.board{background:#fff;border-color:var(--ln)}
+.board .r{border-color:var(--ln)}
+.board .h{background:var(--soft);color:var(--bdt)}
+.board .ok{color:#176a4d}
+
+.team ul{margin-bottom:0}
+.card .portrait{aspect-ratio:4/5;background:var(--soft);border-bottom:4px solid var(--tc,var(--pr))}
+.portrait img{width:100%;height:100%;display:block;object-fit:contain}
+.grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr))}
+.bgm{max-width:calc(100% - 28px);box-shadow:0 4px 18px #183e501f}
+.bgm button{flex:none}
+.bgm #bgmn{width:32px;height:32px;background:var(--soft);color:var(--pr)}
+.bgm input{width:clamp(42px,14vw,88px);flex:none}
+.track-window{width:clamp(90px,34vw,176px);min-width:0;overflow:hidden;color:var(--tx);font-size:13px;white-space:nowrap;text-overflow:ellipsis}
+.track-window span{display:inline-block}
+@media(prefers-reduced-motion:no-preference){
+.track-window.playing span{padding-right:16px;animation:track-scroll 9s linear infinite}
+@keyframes track-scroll{from{transform:translateX(175px)}to{transform:translateX(-100%)}}
+}
+.volume-control{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:8px;width:112px;flex:none;font-size:12px;line-height:1.2}
+.bgm .volume-control label{display:block;color:var(--tx);font-weight:700}
+.volume-control output{font-variant-numeric:tabular-nums;color:var(--mu)}
+.bgm .volume-control input{grid-column:1/-1;width:100%;height:24px;margin:0;cursor:pointer}
+@media(max-width:420px){.volume-control{width:84px}.bgm{gap:7px}}
+
+#peoplegrid .portrait{aspect-ratio:8/5;border-bottom-width:3px}
+#peoplegrid .portrait-button{display:block;width:100%;height:100%;border:0;padding:0;background:none;cursor:pointer}
+.staff-open{margin-top:9px;padding:4px 10px;font-size:13px}
+#staff-detail{width:min(680px,calc(100% - 28px));max-height:85vh;overflow:auto;border:1px solid var(--ln);border-radius:14px;padding:20px;color:var(--tx)}
+#staff-detail::backdrop{background:#142d46a0}
+#staff-detail form{text-align:right}
+#staff-info h3{margin:0;font-size:24px}
+#staff-info img{width:100%;height:auto;display:block;border-radius:6px;margin:12px 0}
+#staff-info dl{display:grid;grid-template-columns:90px 1fr;gap:5px 12px}
+#staff-info dd{margin:0}
+#trait-options{margin:7px 0 0;gap:5px}
+#trait-options button{padding:3px 9px;font-size:12px}
+.skill-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(100px,.68fr) auto;gap:6px;margin-top:4px}
+.skill-row button{padding:6px 8px;white-space:nowrap;font-size:13px}
+.persona-preview label{display:block;margin-top:12px;font-size:14px}
+.persona-preview .id{position:static;border:1px solid var(--ln);border-top:5px solid #18344e;background:#f5f8fa}
+.persona-preview textarea{display:block;margin:5px 0 12px;background:white}
+.persona-preview a{display:inline-block;text-decoration:none}
+.issue-layout{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}
+#issue-card{width:100%;height:auto;display:block;border-radius:12px;border:1px solid var(--ln);margin-bottom:10px}
+#issue-form input[type=range]{padding:0;accent-color:var(--pr)}
+#issue-form .lead,#issue-status{margin:0;font-size:13px}
+#issue-form .btn{padding:8px 10px}
+@media(max-width:720px){.issue-layout{grid-template-columns:1fr}}
+@media(max-width:360px){.skill-row{grid-template-columns:1fr auto}.skill-row input{grid-column:1/-1}}
+.race-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(88px,.8fr);gap:6px;margin-top:4px}.race-row select{padding-inline:6px}#issue-card{background:#e9f0f2}
+.staff-gallery{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;margin:12px 0 0}
+.staff-gallery button{width:36px;height:44px;background:var(--soft);border:1px solid var(--ln);border-radius:8px;color:var(--pr);font:inherit;font-size:18px;font-weight:700;cursor:pointer}
+.staff-gallery button:hover{background:var(--pr);color:var(--prt)}
+.gallery-frame{min-height:120px;background:var(--soft);border-radius:6px;display:grid;place-items:center;overflow:hidden;text-align:center}
+#staff-info .gallery-frame img{width:100%;max-height:54vh;object-fit:contain;margin:0}
+.gallery-count{text-align:center;color:var(--mu);font-size:13px;margin:4px 0 12px}
+@media(max-width:480px){.staff-gallery{gap:4px}.staff-gallery button{width:30px}}
+</style>
+</head>
+<body>
+<div class="util"><div class="wrap"><span>K-307 소행성 · 도킹 스테이션 공식 안내</span></div></div>
+<header class="top"><div class="wrap">
+<a class="logo" href="#home"><img src="assets/logo.png" width="42" height="42" alt=""><span>도킹 스테이션<small>K-307 우주 교통 허브 관리 시설</small></span></a>
+<nav id="nav" aria-label="주 메뉴"><a href="#home">홈</a><a href="#about">시설 소개</a><a href="#teams">팀 안내</a><a href="#people">직원 소개</a><a href="#persona">페르소나 만들기</a><a href="#issue">사원증 발급</a></nav>
+</div></header>
+
+<main>
+<section class="v" id="v-home">
+<div class="hero"><div class="wrap">
+<h1>다음 출항은<br>우리가 준비합니다.</h1>
+<p>K-307 소행성에 정차하는 우주함의 청소, 보급, 정비, 경비, 의료, 운항을 맡은 도킹 스테이션입니다.</p>
+<div class="board-wrap"><div class="board" role="table" aria-label="스피카 운항 정보">
+<div class="r h" role="row"><span>함선</span><span>구분</span><span>현재 상태</span><span>담당</span></div>
+<div class="r" role="row"><span class="c">스피카</span><span class="c">관리 우주함</span><span class="c s">정차 중 · 출항 준비</span><span class="c ok">전 팀</span></div>
+<div class="r" role="row"><span class="c">객실</span><span class="c">정리·보급</span><span class="c">기생종 점검 후 청소</span><span class="c">환경보급팀</span></div>
+<div class="r" role="row"><span class="c">야간 순찰</span><span class="c">정기 경비</span><span class="c">잔존 승객 확인</span><span class="c">특수보안팀</span></div>
+</div></div>
+</div></div>
+<div class="wrap" style="padding-top:32px">
+<div class="grid" id="hometeams"></div>
+</div>
+</section>
+
+<section class="v" id="v-about"><div class="wrap">
+<h2>시설 소개</h2><p class="lead">K-307과 도킹 스테이션, 그리고 스피카에 대한 기본 안내입니다.</p>
+<div class="stats">
+<div class="stat"><b>장소</b><span>K-307 소행성 (소도시)</span></div>
+<div class="stat"><b>시설</b><span>도킹 스테이션</span></div>
+<div class="stat"><b>관리 우주함</b><span>스피카</span></div>
+<div class="stat"><b>구성</b><span>5개 팀 · 15명</span></div>
+</div>
+<div class="panel">
+<h3 style="margin-top:0">K-307</h3>
+<p>우주에 떠 있는 오래된 소행성이자 소도시입니다. 여러 종족이 함께 살아가며, 공항 같은 우주 교통 허브를 중심으로 주거지와 상가가 들어서 있습니다. 우주함은 주민들에게 익숙한 대중교통으로, 가까운 곳을 오가는 통근편부터 행성 간 장거리편까지 다양한 함선이 드나듭니다.</p>
+<h3>도킹 스테이션</h3>
+<p>이곳에 정차하는 우주함을 관리하는 시설입니다. 객실 청소와 보급, 수리와 시설 관리, 경비와 의료 지원을 맡으며, 우주함을 직접 운행하는 팀도 소속되어 있습니다. 스피카 역시 이곳에서 관리합니다.</p>
+<h3>근무 환경</h3>
+<p>급여가 높은 만큼 일이 험한 고수익 3D 업종으로 악명이 높습니다. 우주함에 들러붙은 기생종을 처리하고, 사고 현장을 치우고, 고장 난 설비를 뜯다 보면 하루가 갑니다. 야간 순찰 중 소동에 휘말리거나 긴급 호출로 퇴근이 밀리는 일도 흔합니다. 대부분은 수습기간조차 채우지 못하고 그만둡니다.</p>
+<p>남아 있는 직원은 독하거나, 오갈 데가 없거나, 이 일에 이상할 정도로 잘 맞는 사람들입니다. 대다수가 한 성깔 하는 꼴통 기질을 지녔습니다. 투덜대고 티격태격하는 와중에도 우주함은 계속 들어오고, 다음 출항을 위한 작업은 돌아갑니다.</p>
+</div></div></section>
+
+<section class="v" id="v-teams"><div class="wrap">
+<h2>팀 안내</h2><p class="lead">스테이션은 다섯 팀으로 구성되어 있습니다.</p>
+<div class="grid" id="teamgrid"></div>
+</div></section>
+
+<section class="v" id="v-people"><div class="wrap">
+<h2>직원 소개</h2><p class="lead">사원증을 누르면 직원의 간단한 프로필을 볼 수 있습니다.</p>
+<div class="filters" id="filters" role="group" aria-label="팀 필터"></div>
+<div class="grid" id="peoplegrid"></div><dialog id="staff-detail" aria-labelledby="staff-name"><form method="dialog"><button class="btn g" aria-label="프로필 닫기">닫기</button></form><div id="staff-info"></div></dialog>
+</div></section>
+
+<section class="v" id="v-persona"><div class="wrap">
+<h2>페르소나 만들기</h2><p class="lead">새 직원이나 나만의 캐릭터를 만들어 보세요. 설정문을 확인하거나 사원증 발급 메뉴에서 사진을 넣을 수 있습니다.</p>
+<div class="lay">
+<form class="p" id="pf" autocomplete="off">
+<label>이름<input name="name" maxlength="20" placeholder="예: 한여름"></label>
+<div><label for="persona-race">종족</label><div class="race-row"><input id="persona-race" name="race" maxlength="20" placeholder="직접 입력"><select class="race-select" aria-label="페르소나 종족 목록"></select></div></div>
+<label>소속 팀<select name="team" id="pteam"></select></label>
+<label>직급<input name="rank" maxlength="20" placeholder="예: 수습, 주임"></label>
+<label>나이<input name="age" maxlength="12" placeholder="예: 28세"></label>
+<label>근속<input name="tenure" maxlength="12" placeholder="예: 3개월"></label>
+<div class="f"><label>성격 키워드<input name="trait" maxlength="40" placeholder="직접 쓰거나 아래에서 선택"></label><div id="trait-options" class="filters"></div></div>
+<label class="f">한 줄 소개<input name="line" maxlength="60" placeholder="이 일에 남은 이유를 한 줄로"></label>
+<div class="f"><label for="pskill">능력·특기</label><div class="skill-row"><input id="pskill" name="skill" maxlength="40" placeholder="직접 입력"><select id="skill-options" aria-label="추천 능력·특기"></select><button id="skill-random" class="btn g" type="button">무작위</button></div></div>
+<label class="f">배경 이야기<textarea name="story" maxlength="400" placeholder="K-307에 오기 전과 후"></textarea></label>
+<div class="f row"><button class="btn" type="submit">저장</button><button class="btn g" type="button" id="cp">텍스트 복사</button><button class="btn g" type="reset" id="rs">초기화</button></div>
+<p class="f empty" id="msg" role="status"></p>
+</form>
+<aside class="persona-preview"><div class="id" id="idc"></div><label for="persona-text">설정문 미리보기</label><textarea id="persona-text" readonly rows="7"></textarea><a class="btn g" href="#issue">사원증 발급으로 이동</a></aside>
+</div>
+<div class="saved"><h2 style="font-size:20px">저장한 페르소나</h2><div class="grid" id="saved"></div></div>
+</div></section>
+<section class="v" id="v-issue"><div class="wrap">
+<h2>사원증 발급</h2><p class="lead">사진과 직원 정보를 넣으면 사원증을 PNG로 저장할 수 있습니다.</p>
+<div class="lay issue-layout">
+<form class="p panel" id="issue-form" autocomplete="off">
+<label class="f">증명사진<input id="issue-photo" type="file" accept="image/*"></label>
+<p class="f lead">사진은 이 기기에서만 사용됩니다.</p>
+<label class="f">사진 크기<input name="zoom" type="range" min="100" max="260" value="100"></label>
+<label>사진 좌우 위치<input name="px" type="range" min="-100" max="100" value="0"></label>
+<label>사진 위아래 위치<input name="py" type="range" min="-100" max="100" value="0"></label>
+<label>이름<input name="name" maxlength="20"></label><label>나이<input name="age" maxlength="12"></label>
+<div><label for="issue-race">종족</label><div class="race-row"><input id="issue-race" name="race" maxlength="20" placeholder="직접 입력"><select class="race-select" aria-label="사원증 종족 목록"></select></div></div><label>직책<input name="rank" maxlength="20"></label>
+<label class="f">소속 팀<select name="team" id="issue-team"></select></label>
+<label class="f">능력·특기<input name="skill" maxlength="40"></label>
+<label class="f">프로필<textarea name="profile" maxlength="180" placeholder="직원증에 넣을 짧은 소개"></textarea></label><div class="row f"><button class="btn" type="button" id="issue-save">PNG로 저장</button><button class="btn g" type="button" id="issue-import">페르소나 가져오기</button><button class="btn g" type="reset">초기화</button></div>
+<p class="f" id="issue-status" role="status"></p>
+</form>
+<div><canvas id="issue-card" width="1600" height="1000" role="img" aria-label="K-307 사원증 미리보기"></canvas><p class="lead">입력한 내용이 바로 반영됩니다.</p></div>
+</div></div></section>
+</main>
+
+<div class="bgm" role="group" aria-label="배경음악">
+<button id="bgmb" type="button" aria-pressed="false" aria-label="배경음악 재생">▶</button>
+<div class="track-window" id="track-info" aria-live="polite"><span id="track-title">DOKING☆MAKING</span></div>
+<button id="bgmn" type="button" aria-label="다음 곡">⏭</button>
+<div class="volume-control"><label for="bgmv">음량</label><input id="bgmv" type="range" min="0" max="100" value="15"><output id="volume-value" for="bgmv">15%</output></div>
+<audio id="bgm-audio" preload="none"></audio>
+</div>
+<footer><div class="wrap"><p>K-307 도킹 스테이션 · 여객·운항 안내</p><p>탑승구 및 출항 시간은 터미널 안내판에서 확인해 주세요.</p></div></footer>
+
+<script>
+var TEAMS=[
+{id:"env",n:"환경보급팀",c:"#1b8a5a",d:"하선 후 객실 정리와 청소, 물과 비품, 소모품 보충을 맡습니다.",e:["객실 청소·보급","기생종 처치","사고 현장 후처리"]},
+{id:"fac",n:"시설정비팀",c:"#c9741a",d:"정차 중 우주함 수리와 관리소, 작업 구역의 시설 유지·보수를 맡습니다.",e:["우주함 이상 발생","내부 전자기기 오작동","설비 고장"]},
+{id:"sec",n:"특수보안팀",c:"#b3262e",d:"정기 야간 순찰과 특수 경비를 맡습니다.",e:["잔존 승객 퇴거","밀입국자 대응","테러범 제압"]},
+{id:"med",n:"의료지원팀",c:"#7a3fb0",d:"직원들의 부상·질환 관리와 치료를 맡습니다.",e:["작업 중 부상자 발생","승객 중 긴급 환자 발생"]},
+{id:"nav",n:"우주운항팀",c:"#0a3d8f",d:"우주함을 직접 운행합니다.",e:["항로 이탈","조종계통 이상","긴급 회항·불시착 대응"]}];
+var PEOPLE=[
+["env","모로","A"],["env","루드 파커","B"],["env","정새벽","C"],
+["fac","바스 틸라","M"],["fac","듀-N1107","N"],["fac","올리-O0517","O"],
+["sec","자현","D"],["sec","지그-E0708","E"],["sec","플레임","F"],
+["med","앙헬 보시오","J"],["med","나나 로레","K"],["med","샤비 달글리시","L"],
+["nav","모리 유우","G"],["nav","모리 유토","H"],["nav","러프","I"]];
+var T={};TEAMS.forEach(function(t){T[t.id]=t});
+var $=function(s){return document.querySelector(s)};
+function el(h){var d=document.createElement("div");d.innerHTML=h;return d.firstElementChild}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function teamCard(t){
+return '<div class="team" style="--tc:'+t.c+'"><h3>'+t.n+'</h3><p class="d">'+t.d+'</p><ul>'+t.e.map(function(x){return"<li>"+x+"</li>"}).join("")+'</ul></div>'}
+$("#hometeams").innerHTML=TEAMS.map(teamCard).join("");
+$("#teamgrid").innerHTML=TEAMS.map(teamCard).join("");
+var cur="all";
+function renderPeople(){
+$("#filters").innerHTML=[["all","전체"]].concat(TEAMS.map(function(t){return[t.id,t.n]})).map(function(f){return'<button type="button" data-f="'+f[0]+'" aria-pressed="'+(cur==f[0])+'">'+f[1]+'</button>'}).join("");
+$("#peoplegrid").innerHTML=PEOPLE.filter(function(p){return cur=="all"||p[0]==cur}).map(function(p){var t=T[p[0]];
+return'<div class="card" style="--tc:'+t.c+'"><div class="portrait"><button class="portrait-button" type="button" data-staff="'+p[2]+'" aria-label="'+esc(p[1])+' 프로필 보기"><img src="https://itimg.kr/7157/dm/'+p[2]+'.webp" alt="'+esc(p[1])+' 사원증" loading="lazy"></button></div><div class="bd"><h3>'+esc(p[1])+'</h3><div class="t">'+t.n+'</div><button class="staff-open btn g" type="button" data-staff="'+p[2]+'">프로필 보기</button></div></div>'}).join("")}
+$("#filters").addEventListener("click",function(e){var b=e.target.closest("button");if(b){cur=b.dataset.f;renderPeople()}});
+renderPeople();
+
+var F=$("#pf");
+$("#pteam").innerHTML=TEAMS.map(function(t){return'<option value="'+t.id+'">'+t.n+'</option>'}).join("");
+var L=[["race","종족"],["rank","직급"],["age","나이"],["tenure","근속"],["trait","성격"],["skill","능력·특기"],["line","소개"],["story","배경"]];
+function data(){var o={};new FormData(F).forEach(function(v,k){o[k]=v.trim()});return o}
+function idHtml(o){var t=T[o.team]||TEAMS[0];
+return'<div class="hd" style="--tc:'+t.c+';background:'+t.c+'"><span>페르소나 미리보기</span><span>'+t.n+'</span></div><div class="bd"><p class="nm">'+(esc(o.name)||"이름 미정")+'</p><dl>'+L.map(function(l){return o[l[0]]?'<dt>'+l[1]+'</dt><dd>'+esc(o[l[0]])+'</dd>':""}).join("")+'</dl></div>'}
+function personaText(o){
+  return ["[도킹 스테이션] "+(o.name||"이름 미정"),"소속: "+T[o.team].n].concat(L.filter(l=>o[l[0]]).map(l=>l[1]+": "+o[l[0]])).join("\n");
+}
+function draw(){
+  const o=data();
+  $("#idc").innerHTML=idHtml(o);
+  $("#persona-text").value=personaText(o);
+  updatePersonaChoices(o);
+}
+F.addEventListener("input",draw);F.addEventListener("change",draw);F.addEventListener("reset",function(){setTimeout(draw,0)});
+var store=[];
+try{store=JSON.parse(localStorage.getItem("ds-personas")||"[]")}catch(e){store=[]}
+function persist(){try{localStorage.setItem("ds-personas",JSON.stringify(store))}catch(e){}}
+function renderSaved(){var box=$("#saved");
+if(!store.length){box.innerHTML='<p class="empty">아직 저장한 페르소나가 없습니다. 위 양식을 채우고 저장하세요.</p>';return}
+box.innerHTML="";store.forEach(function(o,i){var t=T[o.team]||TEAMS[0];
+var c=el('<div class="card" style="--tc:'+t.c+'"><div class="bd"><div><h3>'+(esc(o.name)||"이름 미정")+'</h3><div class="t">'+t.n+(o.rank?" · "+esc(o.rank):"")+'</div></div><div class="row"><button class="btn g" type="button" data-a="load">불러오기</button><button class="btn g" type="button" data-a="del">삭제</button></div></div></div>');
+c.querySelector('[data-a=load]').onclick=function(){Object.keys(o).forEach(function(k){if(F.elements[k])F.elements[k].value=o[k]});F.elements.race.dispatchEvent(new Event("input",{bubbles:true}));draw();window.scrollTo({top:0})};
+c.querySelector('[data-a=del]').onclick=function(){store.splice(i,1);persist();renderSaved()};
+box.appendChild(c)})}
+F.addEventListener("submit",function(e){e.preventDefault();var o=data();
+if(!o.name){$("#msg").textContent="이름을 입력해 주세요.";return}
+store.push(o);persist();renderSaved();$("#msg").textContent=o.name+" 페르소나를 저장했습니다."});
+$("#cp").onclick=function(){var o=data(),t=T[o.team];
+var s=["[도킹 스테이션] "+(o.name||"이름 미정"),"소속: "+t.n].concat(L.filter(function(l){return o[l[0]]}).map(function(l){return l[1]+": "+o[l[0]]})).join("\n");
+var ok=function(){$("#msg").textContent="복사했습니다."},no=function(){$("#msg").textContent="복사하지 못했습니다. 사원증 내용을 직접 선택해 복사해 주세요."};
+try{navigator.clipboard.writeText(s).then(ok,no)}catch(x){no()}};
+renderSaved();
+
+
+const staffProfiles={
+ A:["38세","미우","팀장","후각·청각 탐지","태연하고 고집 센 고양이 팀장. 루드가 야옹을 통역한다."],
+ B:["26세","인간과 타 종족의 혼혈","팀원","사이코메트리","붙임성 좋고 뻔뻔하다. 모로의 생각을 읽어 통역한다."],
+ C:["24세","인간","팀원","정밀 사격","조용하고 나른하다. 방제용 장총으로 기생종을 처리한다."],
+ D:["35세","인간","팀장","정지","느긋하고 직설적이다. 낮은 반말에 불교 용어를 섞는다."],
+ E:["23세","머신","팀원","자력 그립","눈치 빠르고 능청스럽다. 금속 벽이나 천장을 타고 이동한다."],
+ F:["32세","오브","팀원","용해","푸른 불꽃 머리의 호탕한 보안 직원. 손으로 금속을 녹인다."],
+ G:["28세","인간","팀장","조종","최연소 팀장. 정밀 도킹에 능하지만 서류는 유토에게 잘 떠넘긴다."],
+ H:["28세","인간","팀원","비상 복구","까칠한 유우의 쌍둥이 동생. 고장 난 장비를 잠시 재가동한다."],
+ I:["21세","루포","팀원","냄새 추적","태평하고 혼잣말이 많다. 냄새를 따라 문제의 근원지를 찾는다."],
+ J:["37세","오닉스","팀장","봉합","나긋하고 다정하다. 부상을 숨기는 사람에겐 단호하다."],
+ K:["23세","플로라","팀원","발아","순수하고 해맑다. 머리의 약초를 뽑으면 잠시 멍해진다."],
+ L:["26세","루멘","팀원","스캔","퉁명스럽게 말하면서도 뒤에서 챙긴다. 접촉한 부위의 내부를 진단한다."],
+ M:["35세","오닉스","팀장","하중 지지","과묵하다. 지킬 수 있는 약속만 하고 맡은 일은 끝까지 한다."],
+ N:["27세","머신","팀원","팔 변형","무던하고 귀찮은 일을 싫어한다. 기계 팔을 공구로 바꿀 수 있다."],
+ O:["27세","머신","팀원","시스템 접속","농담이 가볍고 말투에 날티가 난다. 듀와 오래된 콤비다."]
+};
+const staffImages=["00","18","22"];
+$("#peoplegrid").addEventListener("click",function(e){
+  const trigger=e.target.closest("[data-staff]");
+  if(!trigger)return;
+  const key=trigger.dataset.staff,p=PEOPLE.find(item=>item[2]===key),info=staffProfiles[key];
+  const fields=[T[p[0]].n,info[2],info[0],info[1],info[3]];
+  const base="https://itimg.kr/7157/dm/"+key;
+  const slides=[{url:base+".webp",label:"사원증"},...staffImages.map(code=>({url:base+"/"+code+".webp",label:"일러스트 "+code}))];
+  $("#staff-info").innerHTML='<h3 id="staff-name">'+esc(p[1])+'</h3>'+
+    '<div class="staff-gallery" role="group" aria-label="직원 이미지">'+
+    '<button class="gallery-prev" type="button" aria-label="이전 이미지">&lt;</button>'+
+    '<div class="gallery-frame"></div>'+
+    '<button class="gallery-next" type="button" aria-label="다음 이미지">&gt;</button></div>'+
+    '<p class="gallery-count" aria-live="polite"></p><dl>'+
+    ["소속","직책","나이","종족","능력·특기"].map((label,i)=>'<dt>'+label+'</dt><dd>'+esc(fields[i])+'</dd>').join("")+'</dl><p>'+esc(info[4])+'</p>';
+  const gallery=$("#staff-info .staff-gallery"),frame=gallery.querySelector(".gallery-frame"),count=$("#staff-info .gallery-count");
+  let current=0;
+  function showSlide(){
+    const slide=slides[current], img=new Image();
+    img.alt=p[1]+" "+slide.label;
+    img.addEventListener("error",()=>{
+      if(!frame.contains(img))return;
+      const error=document.createElement("p");
+      error.textContent="이미지를 불러오지 못했습니다.";
+      frame.replaceChildren(error);
+    });
+    frame.replaceChildren(img);
+    img.src=slide.url;
+    count.textContent=(current+1)+" / "+slides.length+" · "+slide.label;
+  }
+  function move(direction){
+    current=(current+direction+slides.length)%slides.length;
+    showSlide();
+  }
+  gallery.querySelector(".gallery-prev").onclick=()=>move(-1);
+  gallery.querySelector(".gallery-next").onclick=()=>move(1);
+  gallery.onkeydown=function(event){
+    if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;
+    event.preventDefault();
+    move(event.key==="ArrowLeft"?-1:1);
+  };
+  showSlide();
+  $("#staff-detail").showModal();
+});
+
+const traits=["다정한","차분한","장난기 많은","까칠한","과묵한","능청스러운","호기심 많은","느긋한","고집 센","책임감 강한"];
+const suggestions={
+ env:["오염 감지","점착 실 생성","거품 장벽","미세 진동 감지","물체 흔적 읽기"],
+ fac:["금속 성형","기계 공명","전자기장 조작","순간 밀봉","팔 공구 변형"],
+ sec:["그림자 이동","충격 흡수","중력 구속","소리 차단","투명화"],
+ med:["외상 봉합","생체 스캔","통증 억제","약초 발아","생체 신호 감지"],
+ nav:["관성 완충","공간 감각","단거리 순간이동","위험 예감","장비 일시 재가동"]
+};
+const traitButtons=$("#trait-options"), skillChoices=$("#skill-options");
+traitButtons.innerHTML=traits.map((t,i)=>'<button type="button" data-trait="'+i+'" aria-pressed="false">'+t+'</button>').join("");
+function traitValues(value){return value.split(",").map(t=>t.trim()).filter(Boolean);}
+function updatePersonaChoices(o){
+  const selected=traitValues(o.trait);
+  traitButtons.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(selected.includes(traits[b.dataset.trait]))));
+  if(skillChoices.dataset.team!==o.team){
+    skillChoices.dataset.team=o.team;
+    skillChoices.innerHTML='<option value="">추천 목록</option>'+suggestions[o.team].map(s=>'<option>'+s+'</option>').join("");
+  }
+  skillChoices.value=suggestions[o.team].includes(o.skill)?o.skill:"";
+}
+traitButtons.onclick=function(e){
+  const button=e.target.closest("[data-trait]");if(!button)return;
+  const label=traits[button.dataset.trait], values=traitValues(F.elements.trait.value);
+  const next=(values.includes(label)?values.filter(t=>t!==label):values.concat(label)).join(", ");
+  if(next.length<=F.elements.trait.maxLength)F.elements.trait.value=next;
+  draw();
+};
+skillChoices.onchange=function(){if(this.value)F.elements.skill.value=this.value;draw();};
+$("#skill-random").onclick=function(){
+  const list=suggestions[F.elements.team.value].filter(s=>s!==F.elements.skill.value);
+  F.elements.skill.value=list[Math.floor(Math.random()*list.length)];draw();
+};
+draw();
+
+const issueForm=$("#issue-form"), issueCanvas=$("#issue-card"), ink=issueCanvas.getContext("2d");
+const photoInput=$("#issue-photo"), issueStatus=$("#issue-status"), badgeTemplate=new Image();
+let badgePhoto=null, photoVersion=0;
+$("#issue-team").innerHTML=$("#pteam").innerHTML;
+function badgeText(value,x,y,size,weight,color,max){
+  ink.font=weight+" "+size+"px 'Malgun Gothic', sans-serif";
+  ink.fillStyle=color;
+  const chars=Array.from(value||"");
+  if(max && ink.measureText(value||"").width>max){
+    while(chars.length && ink.measureText(chars.join("")+"…").width>max)chars.pop();
+    value=chars.join("")+"…";
+  }
+  ink.fillText(value||"",x,y);
+}
+
+function drawBadge(){
+  ink.clearRect(0,0,1600,1000);
+  if(!badgeTemplate.naturalWidth)return;
+  const d=new FormData(issueForm), team=T[d.get("team")];
+  const x=85,y=231,w=425,h=530;
+  if(badgePhoto){
+    const s=Math.max(w/badgePhoto.width,h/badgePhoto.height)*Number(d.get("zoom"))/100;
+    const pw=badgePhoto.width*s,ph=badgePhoto.height*s;
+    ink.save();ink.beginPath();ink.rect(x,y,w,h);ink.clip();
+    ink.drawImage(badgePhoto,x+(w-pw)/2+(pw-w)*Number(d.get("px"))/200,y+(h-ph)/2+(ph-h)*Number(d.get("py"))/200,pw,ph);
+    ink.restore();
+  }
+  ink.drawImage(badgeTemplate,0,0);
+  [[d.get("name"),563,300,605],[d.get("age"),1216,300,285],
+   [team.n,563,415,435],[d.get("rank"),1046,415,455],
+   [d.get("race"),563,530,435],[d.get("skill"),1046,530,455]].forEach(([v,xx,yy,max])=>{
+    badgeText(v,xx,yy,31,700,"#183e50",max);
+  });
+  ink.font="500 29px 'Malgun Gothic', sans-serif";
+  const lines=[];
+  let line="";
+  for(const char of d.get("profile").trim()){
+    if(char==="\n"||ink.measureText(line+char).width>930){
+      lines.push(line.trimEnd());line=char==="\n"?"":char.trimStart();
+    }else line+=char;
+  }
+  if(line)lines.push(line);
+  lines.slice(0,3).forEach((v,i)=>badgeText(v+(i===2&&lines.length>3?"…":""),563,646+i*57,29,500,"#183e50",940));
+}
+badgeTemplate.onload=drawBadge;
+badgeTemplate.onerror=()=>{issueStatus.textContent="직원증 틀을 불러오지 못했습니다.";};
+badgeTemplate.src="assets/personnel-pass.png";
+
+issueForm.addEventListener("input",drawBadge);issueForm.addEventListener("change",drawBadge);
+issueForm.addEventListener("reset",()=>{photoVersion++;badgePhoto=null;issueStatus.textContent="";setTimeout(drawBadge,0);});
+photoInput.addEventListener("change",function(){
+  const version=++photoVersion, file=this.files[0];badgePhoto=null;issueStatus.textContent="";drawBadge();
+  if(!file)return;
+  const image=new Image(), url=URL.createObjectURL(file);
+  image.onload=()=>{URL.revokeObjectURL(url);if(version===photoVersion){badgePhoto=image;drawBadge();}};
+  image.onerror=()=>{URL.revokeObjectURL(url);if(version===photoVersion)issueStatus.textContent="사진을 열 수 없습니다. PNG 또는 JPG를 선택해 주세요.";};
+  image.src=url;
+});
+$("#issue-import").onclick=function(){
+  const p=data();
+  ["name","age","race","team","rank","skill"].forEach(k=>issueForm.elements[k].value=p[k]);
+  issueForm.elements.profile.value=[p.trait,p.line].filter(Boolean).join("\n");
+  issueForm.elements.race.dispatchEvent(new Event("input",{bubbles:true}));
+  drawBadge();issueStatus.textContent="현재 페르소나 정보를 가져왔습니다.";
+};
+$("#issue-save").onclick=function(){
+  if(!badgeTemplate.naturalWidth){issueStatus.textContent="직원증 틀을 불러오는 중이거나 열 수 없습니다.";return;}
+  if(!issueForm.elements.name.value.trim()){issueStatus.textContent="이름을 입력해 주세요.";issueForm.elements.name.focus();return;}
+  issueCanvas.toBlob(function(blob){
+    if(!blob){issueStatus.textContent="PNG를 만들지 못했습니다.";return;}
+    const url=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=url;a.download="K-307-"+issueForm.elements.name.value.trim()+"-사원증.png";
+    document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    issueStatus.textContent="사원증 PNG를 만들었습니다.";
+  },"image/png");
+};
+drawBadge();
+
+const species=["인간","미우","오브","루포","머신","오닉스","루멘","플로라"];
+document.querySelectorAll(".race-select").forEach(select=>{
+  const field=select.form.elements.race;
+  select.innerHTML='<option value="">종족 선택</option>'+species.map(s=>'<option>'+s+'</option>').join("");
+  function syncRace(){select.value=species.includes(field.value)?field.value:"";}
+  select.addEventListener("change",()=>{
+    if(select.value){field.value=select.value;field.dispatchEvent(new Event("input",{bubbles:true}));}
+  });
+  field.addEventListener("input",syncRace);
+  select.form.addEventListener("reset",()=>setTimeout(syncRace,0));
+  syncRace();
+});
+var views=["home","about","teams","people","persona","issue"];
+function route(){var h=(location.hash||"#home").slice(1);if(views.indexOf(h)<0)h="home";
+views.forEach(function(v){$("#v-"+v).classList.toggle("on",v==h)});
+document.querySelectorAll("#nav a").forEach(function(a){a.classList.toggle("on",a.getAttribute("href")=="#"+h)});
+window.scrollTo(0,0)}
+window.addEventListener("hashchange",route);route();
+(function(){
+  const titles=["DOKING☆MAKING","Clock Out","RIGHT ON TIME","NIGHT WATCH","잠깐 여기 앉아","夜明けを追い越せ"];
+  const audio=$("#bgm-audio"), play=$("#bgmb"), title=$("#track-title"), ticker=$("#track-info"), volume=$("#bgmv");
+  let index=0;
+  try{const saved=localStorage.getItem("ds-bgm-vol");if(saved!==null)volume.value=saved;}catch(e){}
+  const volumeValue=$("#volume-value");
+  function syncVolume(){
+    audio.volume=Number(volume.value)/100;
+    volumeValue.textContent=volume.value+"%";
+  }
+  syncVolume();
+  function showTrack(){title.textContent=titles[index];ticker.title=titles[index];audio.src="assets/track-"+(index+1)+".mp3";}
+  function sync(){
+    const playing=!audio.paused&&!audio.ended;
+    play.textContent=playing?"Ⅱ":"▶";
+    play.setAttribute("aria-label",playing?"배경음악 일시정지":"배경음악 재생");
+    play.setAttribute("aria-pressed",String(playing));
+    ticker.classList.toggle("playing",playing);
+  }
+  function startTrack(){audio.play().catch(sync);}
+  function next(keepPlaying){index=(index+1)%titles.length;showTrack();if(keepPlaying)startTrack();}
+  play.onclick=function(){if(audio.paused)startTrack();else audio.pause();};
+  $("#bgmn").onclick=function(){next(!audio.paused);};
+  volume.oninput=function(){syncVolume();try{localStorage.setItem("ds-bgm-vol",volume.value);}catch(e){}};
+  ["play","pause","emptied"].forEach(event=>audio.addEventListener(event,sync));
+  audio.addEventListener("ended",()=>next(true));
+  audio.addEventListener("error",()=>{title.textContent="음원을 불러오지 못했습니다";sync();});
+  showTrack();
+})();
+</script>
+</body>
+</html>
+
+
+
+
+
+
